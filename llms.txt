@@ -1,25 +1,40 @@
 # React Native Google Sign In
 
-> Google sign in for Expo and React Native apps
+> Google Sign-In for React Native and Expo apps (Android, iOS, macOS, web). Package: @react-native-google-signin/google-signin
 
-This file contains links to documentation sections following the llmstxt.org standard.
+## Overview
+
+`@react-native-google-signin/google-signin` provides Google authentication for React Native and Expo apps.
+
+There are two modules:
+- **Universal Sign In** (recommended, [paid](https://universal-sign-in.com/#pricing)): Cross-platform API using Android Credential Manager and iOS Google Sign-In SDK. Module name: `GoogleOneTapSignIn`.
+- **Original Google Sign In** (free): Legacy API for Android and iOS only. Module name: `GoogleSignin`.
+
+## Quick start
+
+1. Install the package (see Installation)
+2. Collect configuration (see Configuration guide)
+3. Follow the setup guide for your platform (Expo, Android, iOS, or Web)
+4. Use the Universal Sign In API (see Universal sign in)
+
+## Docs
 
 ## Table of Contents
 
+- [Installation](https://react-native-google-signin.github.io/docs/install): Install @react-native-google-signin/google-signin. Covers paid (Universal Sign In) and free (Original) versions, requirements, and package manager ...
+- [Collecting configuration information](https://react-native-google-signin.github.io/docs/setting-up/get-config-file): How to obtain webClientId, iOS clientId, and other configuration values from Google Cloud Console or Firebase. Required before platform setup.
+- [Expo setup](https://react-native-google-signin.github.io/docs/setting-up/expo): Expo setup guide. Covers config plugin setup and EAS Build configuration for Google Sign-In.
+- [Android setup guide](https://react-native-google-signin.github.io/docs/setting-up/android): Android setup guide for vanilla React Native apps (not Expo). Covers Google project configuration, linking, and Credential Manager setup.
+- [iOS setup guide](https://react-native-google-signin.github.io/docs/setting-up/ios): iOS setup guide for vanilla React Native apps (not Expo). Covers native module linking, URL schemes, and plist configuration.
+- [Web setup guide](https://react-native-google-signin.github.io/docs/setting-up/web): Web setup guide. Works with NextJS, Vite, and other web frameworks. Covers Google client ID configuration and script loading.
+- [Universal sign in](https://react-native-google-signin.github.io/docs/one-tap): Google's recommended Sign-In API for Android (Credential Manager), iOS/macOS (Google Sign-In SDK), and web. Covers configuration, sign-in flows, us...
+- [Web support](https://react-native-google-signin.github.io/docs/web-support): Web platform support. Works with NextJS, Vite, and other web frameworks without React Native Web dependency. Covers setup, rendering modes, and lim...
+- [Advanced security](https://react-native-google-signin.github.io/docs/security): Advanced security features: custom nonce support on all platforms and App Check for iOS.
+- [GoogleLogoButton](https://react-native-google-signin.github.io/docs/buttons/google-logo-button): GoogleLogoButton component following Google's official branding guidelines. For native apps only (renders null on web). Customizable size, style, a...
+- [WebGoogleSigninButton](https://react-native-google-signin.github.io/docs/buttons/web): WebGoogleSigninButton component for web apps. Renders null in native apps. Supports size, shape, theme, and locale customization.
+- [Error handling](https://react-native-google-signin.github.io/docs/errors): Error handling guide. Covers isErrorWithCode helper, error codes (SIGN_IN_CANCELLED, NO_SAVED_CREDENTIAL_FOUND, PLAY_SERVICES_NOT_AVAILABLE, etc.),...
+- [Testing](https://react-native-google-signin.github.io/docs/testing): How to mock Google Sign-In in Jest tests for both the Universal and Original modules.
+- [FAQ / Troubleshooting](https://react-native-google-signin.github.io/docs/troubleshooting): Common issues and solutions for Android (DEVELOPER_ERROR, cancelled results) and iOS (missing profile data, URL schemes).
+- [Migration guides](https://react-native-google-signin.github.io/docs/migrating): Migration guides: from Original to Universal Sign In module, and from the legacy JS API to the new API.
+- [Configuration Doctor](https://react-native-google-signin.github.io/docs/config-doctor): CLI tool to diagnose Android signing configuration issues and resolve DEVELOPER_ERROR.
 - [API reference](https://react-native-google-signin.github.io/docs/api): > **AuthorizationResponse** = [`CancelledResponse`](#cancelledresponse) \| [`AuthorizationSuccessResponse`](#authorizationsuccessresponse)
-- [GoogleLogoButton](https://react-native-google-signin.github.io/docs/buttons/google-logo-button): A Google Sign-In button that follows Google's official branding guidelines. Intended for native apps. It renders null when used on the web.
-- [WebGoogleSigninButton](https://react-native-google-signin.github.io/docs/buttons/web): This is the sign-in button that you can use in web apps. It renders `null` when used in native apps.
-- [Configuration Doctor](https://react-native-google-signin.github.io/docs/config-doctor): A command-line tool designed to help with Android signing configuration issues and quickly resolve the infamous `DEVELOPER_ERROR`, or potentially [...
-- [Error handling](https://react-native-google-signin.github.io/docs/errors): When catching and handling errors thrown by the library, it's strongly recommended not to immediately present them using the [`Alert` module](https...
-- [Installation](https://react-native-google-signin.github.io/docs/install): There are two ways to consume the package: [paid](https://universal-sign-in.com) and free. If you are an EAS customer, you may be able to access th...
-- [Migration guides](https://react-native-google-signin.github.io/docs/migrating): There are 2 migrations described here: from Original to Universal Sign In and from the old JS API to the new JS API.
-- [Universal sign in](https://react-native-google-signin.github.io/docs/one-tap): This is Google's recommended way to implement Google Sign In. This API is available on Android, iOS, macOS and web (with a little extra work [descr...
-- [Advanced security](https://react-native-google-signin.github.io/docs/security): :::tip
-- [Android setup guide](https://react-native-google-signin.github.io/docs/setting-up/android): :::warning
-- [Expo setup](https://react-native-google-signin.github.io/docs/setting-up/expo): :::note
-- [Collecting configuration information](https://react-native-google-signin.github.io/docs/setting-up/get-config-file): Before getting your hands dirty with code, some configuration needs to be taken care of. Configuration information collected in this guide is used ...
-- [iOS setup guide](https://react-native-google-signin.github.io/docs/setting-up/ios): :::warning
-- [Web setup guide](https://react-native-google-signin.github.io/docs/setting-up/web): The web implementation doesn't depend on React Native (or React Native Web). That means you can use it even with regular web apps created with Next...
-- [Testing](https://react-native-google-signin.github.io/docs/testing): If you want to write JS-level tests that depend on Google Sign In, you need to mock the functionality of the native module - this is because the na...
-- [FAQ / Troubleshooting](https://react-native-google-signin.github.io/docs/troubleshooting): You may be hitting an [error in the Android SDK](https://issuetracker.google.com/issues/424210681). This error is usually observed with `presentExp...
-- [Web support](https://react-native-google-signin.github.io/docs/web-support): The web implementation doesn't depend on React Native (or React Native Web). That means you can use it even with regular web apps created with Next...
