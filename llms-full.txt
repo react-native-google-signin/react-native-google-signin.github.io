@@ -141,8 +141,8 @@ The latest version of the Universal Sign In package supports (use older versions
 
 |              | supported range |
 | ------------ | --------------- |
-| expo         | 52.0.40 - 54    |
-| react-native | 0.76.0 - 0.83   |
+| expo         | 52.0.40 - 55    |
+| react-native | 0.76.0 - 0.84   |
 
 ---
 
@@ -223,7 +223,7 @@ npx @react-native-google-signin/config-doctor
 
 ### Step 2: Add SHA-1 fingerprints to Firebase or Google Cloud Console {#step-2}
 
-Using _all_ of the SHA-1 fingerprints obtained in the previous step, follow the instructions below.
+For _each_ of the SHA-1 fingerprints obtained in the previous step, follow the instructions below.
 
 <Tabs queryString="firebase-or-not">
   <TabItem value="firebase" label="When using Firebase">
@@ -240,7 +240,7 @@ Using _all_ of the SHA-1 fingerprints obtained in the previous step, follow the 
   </TabItem>
 
 <TabItem value="cloud-console" label="When not using Firebase">
-  Create an OAuth Client ID of type Android in [Google Cloud Console](https://console.cloud.google.com/apis/credentials?project=_) for each of the SHA-1 fingerprints you obtained - see the screenshot below.
+  _For each_ of the SHA-1 fingerprints you obtained, create an OAuth Client ID of type Android in [Google Cloud Console](https://console.cloud.google.com/apis/credentials?project=_) - see the screenshot below.
 
 Alternatively, use this wizard.
 
@@ -800,11 +800,11 @@ await GoogleOneTapSignIn.createAccount();
 
 signature: (`params`?: [`OneTapExplicitSignInParams`](api#onetapexplicitsigninparams)) => `Promise`\<[`OneTapExplicitSignInResponse`](api#onetapexplicitsigninresponse)\>
 
-| Platform | Behavior                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
-| -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Android  | Presents the sign in dialog explicitly. This is useful when the user has hit rate limiting ([`ONE_TAP_START_FAILED`](errors#universal-status-codes)) and the one-tap flow is thus not available, or if both `signIn` and `createAccount` resolve with [`NoSavedCredentialFound`](api#nosavedcredentialfound) object - which happens (in the unlikely case) when no Google account is present on the device. This prompts the user to add a Google account. |
-| Apple    | Starts an interactive sign-in flow. Same as `createAccount`.                                                                                                                                                                                                                                                                                                                                                                                               |
-| Web      | Presents a one-tap prompt. Same as `createAccount`.                                                                                                                                                                                                                                                                                                                                                                                                        |
+| Platform | Behavior                                                                                                                                                                                                                                                                                                      |
+| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Android  | Presents the sign in dialog explicitly. This is useful if both `signIn` and `createAccount` resolve with [`NoSavedCredentialFound`](api#nosavedcredentialfound) object - which happens (in the unlikely case) when no Google account is present on the device. This prompts the user to add a Google account. |
+| Apple    | Starts an interactive sign-in flow. Same as `createAccount`.                                                                                                                                                                                                                                                  |
+| Web      | Presents a one-tap prompt. Same as `createAccount`.                                                                                                                                                                                                                                                           |
 
 Preferably, call this method only as a reaction to when user taps a [sign in button](buttons/google-logo-button).
 
@@ -1043,7 +1043,7 @@ There are 2 security-related features available:
 
 [Nonce](https://en.wikipedia.org/wiki/Cryptographic_nonce) (number used once) is a security measure used to mitigate replay attacks and to associate a Client session with an ID Token.
 
-The authorization APIs in [Universal Sign-In](/docs/one-tap) for Apple, Android and web allow you to specify nonce.
+The authentication APIs in [Universal Sign-In](/docs/one-tap) for Apple, Android and web allow you to specify nonce. On native platforms, if it's not specified, a cryptographically random value is generated internally.
 
 Example usage:
 
@@ -1355,12 +1355,6 @@ See [example usage](one-tap#signin).
 | `PLAY_SERVICES_NOT_AVAILABLE` | Play services are not available or outdated. This happens on Android, or on the web when you're calling the exposed APIs [before the Client library is loaded](setting-up/web).                                                                                                                                                                                         |
 | `NULL_PRESENTER`              | Happens in the unlikely situation when the `Activity` (on Android) or `UIViewController` (on iOS) for presenting the sign in UI isn't available.                                                                                                                                                                                                                        |
 
-### Status codes specific to Universal sign in {#universal-status-codes}
-
-| Name                   | Description                                                                                                                                                                                                                                                        |
-| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `ONE_TAP_START_FAILED` | Thrown only on Android when the Universal sign in UI cannot be presented. This happens during the [cooldown period](https://developers.google.com/identity/gsi/web/guides/features#exponential_cooldown). You can still call `presentExplicitSignIn` in that case. |
-
 See [example usage](one-tap#signin).
 
 ---
@@ -1485,9 +1479,13 @@ When adding a new oauth client, google asks you to add your package name. In som
 
 ## iOS
 
-### On iOS the app crashes when tapping Sign In button
+### Sign in result is `cancelled` even though the user did not cancel the flow
 
-Along with "Your app is missing support for the following URL schemes" error in console.
+Make sure you're not presenting the sign-in flow while a modal (e.g. with a loading indicator) is already presented.
+
+### The app crashes when tapping the Sign In button
+
+Along with "Your app is missing support for the following URL schemes" error in Xcode console.
 
 Your `Url Schemes` configuration is incorrect.
 
