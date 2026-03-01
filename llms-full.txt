@@ -36,8 +36,8 @@ Why paid? According to the [State of React Native Survey](https://results.2024.s
   - iOS & macOS: Powered by the [Google Sign-In SDK](https://developers.google.com/identity/sign-in/ios/start)
 
 - **Licensed:** see [pricing](https://universal-sign-in.com/#pricing) and [license](https://universal-sign-in.com/license).
-- **Trusted**: A total of over 750k npm package downloads.
-- **Faster Sign-Ups**: Reduce sign-up and sign-in times on Android by up to 50%, according to [Google](https://developer.android.com/identity/sign-in/legacy-gsi-migration#authentication).
+- **Trusted**: A total of 1 mil+ npm package downloads.
+- **Faster**: Reduce sign-up and sign-in times on Android, according to [Google](https://developer.android.com/identity/sign-in/legacy-gsi-migration#authentication).
 - **See the UI**: [screenshots](screenshots) of the features.
 - **Widely compatible & stable:** Both old and [new architecture](https://reactnative.dev/architecture/landing-page) of React Native are supported. See version [compatibility table](#requirements) below.
 
@@ -183,7 +183,7 @@ import TabItem from '@theme/TabItem';
 <Tabs>
   <TabItem value="config-doctor" label="A device or any APK file" default>
 
-Use the [Configuration Doctor](../config-doctor.md). (Requires an [Universal sign in](/docs/install#premium) license.)
+Use the [Configuration Doctor](../config-doctor). (Requires an [Universal sign in](/docs/install#premium) license.)
 
 1. Get a device / emulator with the app installed, or get the APK (build it locally or in cloud, download from the Play Console / Play Store...)
 2. Run the tool and follow its instructions:
@@ -1451,7 +1451,7 @@ This is always (! _absolutely always_ !) a configuration mismatch between your a
 
 Firstly, if you are using Firebase Auth, verify Google is enabled as a Sign-in method in Firebase Console (Build -> Authentication -> Sign-in method).
 
-Then: if you have the APK (on your phone, or computer) that gives this error, we recommend to run the [Configuration Doctor](./config-doctor.md) and follow its instructions:
+Then: if you have the APK (on your phone, or computer) that gives this error, we recommend to run the [Configuration Doctor](./config-doctor) and follow its instructions:
 
 ```bash
 npx @react-native-google-signin/config-doctor
@@ -1612,6 +1612,11 @@ const getCurrentUserInfo = async () => {
 
 ## Configuration Doctor
 
+
+:::tip
+The functionality covered in this page is available in the licensed
+version. [You can get a license here](https://universal-sign-in.com/#pricing) ⭐️.
+:::
 
 A command-line tool designed to help with Android signing configuration issues and quickly resolve the infamous `DEVELOPER_ERROR`, or potentially [other errors](#when-to-use) too.
 
