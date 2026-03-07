@@ -2,6 +2,21 @@
 
 > Google Sign-In for React Native and Expo apps (Android, iOS, macOS, web). Package: @react-native-google-signin/google-signin
 
+## Overview
+
+`@react-native-google-signin/google-signin` provides Google authentication for React Native and Expo apps on Android, iOS, macOS, and web.
+
+There are two modules:
+- **Universal Sign In** (recommended, [paid](https://universal-sign-in.com/#pricing)): Cross-platform API using Android Credential Manager and iOS Google Sign-In SDK. Module name: `GoogleOneTapSignIn`.
+- **Original Google Sign In** (free): Legacy API for Android and iOS only. Module name: `GoogleSignin`.
+
+Key concepts:
+- Call `configure()` once before any sign-in calls
+- `webClientId` is required for configuration (obtain from Google Cloud Console)
+- Use `signIn()` for returning users, `createAccount()` for new users
+- Use `requestAuthorization()` to request additional OAuth scopes
+- Handle errors with `isErrorWithCode()` helper
+
 ## Setup
 
 ### Installation
@@ -56,8 +71,6 @@ The private npm package is like any other, but it's hosted on the [GitHub npm pa
 1. [Obtain here](https://github.com/settings/tokens/new?description=react-native-google-sign-in\&scopes=read:packages) a Personal Access Token with `packages:read` permission and set expiration to "No expiration".
 
 2. Set up your package manager to fetch the package from the GH packages registry. In this example, we're using an `NPM_TOKEN_GOOGLE_SIGN_IN` environment variable.
-
-<!-- -->
 
 * yarn v3+
 * npm / yarn v1
@@ -115,7 +128,7 @@ There are several guides to follow now:
 
 #### Requirements[​](#requirements "Direct link to Requirements")
 
-For latest version of Universal Sign In, `compileSdkVersion` must be <!-- -->>=<!-- --> 35 and `kotlinVersion` must be <!-- -->>=<!-- --> 2.0.21 in your Android project. If you use Expo SDK 53 or newer, these requirements are already met. Use [`expo-build-properties`](https://docs.expo.dev/versions/latest/sdk/build-properties/#example-appjson-with-config-plugin) to specify these values on Expo SDK <!-- --><=<!-- --> 52.
+For latest version of Universal Sign In, `compileSdkVersion` must be >= 35 and `kotlinVersion` must be >= 2.0.21 in your Android project. If you use Expo SDK 53 or newer, these requirements are already met. Use [`expo-build-properties`](https://docs.expo.dev/versions/latest/sdk/build-properties/#example-appjson-with-config-plugin) to specify these values on Expo SDK <= 52.
 
 The latest version of the Universal Sign In package supports (use older versions of the package if you run older React Native / Expo):
 
@@ -123,7 +136,6 @@ The latest version of the Universal Sign In package supports (use older versions
 | ------------ | --------------- |
 | expo         | 52.0.40 - 55    |
 | react-native | 0.76.0 - 0.84   |
-
 
 ---
 
@@ -180,7 +192,6 @@ This ends the setup for Firebase.
 #### Rebuild the native project[​](#rebuild-the-native-project "Direct link to Rebuild the native project")
 
 Do not forget to rebuild the native app after the setup is done.
-
 
 ---
 
@@ -261,7 +272,6 @@ npx expo run:android && npx expo run:ios
 
 ```
 
-
 ---
 
 ### Collecting configuration information
@@ -292,8 +302,6 @@ If your app is not yet in the Play Store, focus only on the development APK and 
 However, be advised that in the end, you need to get the SHA-1 certificate fingerprints for *all* signing configurations and then use *all* of those SHA-1 fingerprints in [Step 2](#step-2) below.
 
 ###### Collect SHA-1 certificate fingerprints from:[​](#collect-sha-1-certificate-fingerprints-from "Direct link to Collect SHA-1 certificate fingerprints from:")
-
-<!-- -->
 
 * A device or any APK file
 * Google Play Store (when downloading from it)
@@ -389,7 +397,6 @@ At the end of this guide, regardless of whether you use Firebase, when you visit
 * iOS OAuth Client ID(s) with iOS URL scheme
 * Web Client ID
 
-
 ---
 
 ### iOS setup guide
@@ -413,8 +420,7 @@ If you're using Firebase Authentication, download the `GoogleService-Info.plist`
 ##### Xcode configuration[​](#xcode-configuration "Direct link to Xcode configuration")
 
 * Configure URL types in the `Info` panel (see screenshot)
-  <!-- -->
-  * add your "iOS URL scheme" (also known as `reversed client id`), which can be found in [Google Cloud Console](https://console.cloud.google.com/apis/credentials?project=_) under your iOS client ID.
+    * add your "iOS URL scheme" (also known as `reversed client id`), which can be found in [Google Cloud Console](https://console.cloud.google.com/apis/credentials?project=_) under your iOS client ID.
 * If you need to support Mac Catalyst, you need to enable the Keychain Sharing capability on each build target. No keychain groups need to be added.
 
 ![link config](/assets/images/urlTypes-2096dbcdf48dfe2cb07c1e98f33d423f.png)
@@ -487,14 +493,11 @@ For AppDelegate written in Objective-C (the default prior to React Native 0.77),
 
 ```
 
-
 ---
 
 ### Web setup guide
 
 The web implementation doesn't depend on React Native (or React Native Web). That means you can use it even with regular web apps created with NextJS, Vite and etc.
-
-<!-- -->
 
 tip
 
@@ -503,8 +506,6 @@ The functionality covered in this page is available in the licensed version. [Yo
 On the web, you need to load the Google Client Library and make it available in the browser **before** calling any of the APIs exposed by this package.
 
 There are different ways to load the client script. Some of them are:
-
-<!-- -->
 
 * Next.js
 * Simple html
@@ -551,7 +552,6 @@ You can read the official docs for loading the Client Library [here](https://dev
 #### Usage[​](#usage "Direct link to Usage")
 
 See [here](/docs/web-support.md#usage).
-
 
 ---
 
@@ -1189,14 +1189,11 @@ When using Universal sign in on the web, the sign in result is delivered via a c
 | []()`onError`         | (`error`: `NativeModuleError`) => `void` | `Promise`<`void`>                                                | Called when an error occurs. You can use the `code` property of the error to determine the reason for the error. The reported errors on the web are in the same format as the errors reported on the native platforms, so you can reuse your error handling code. |
 | []()`onResponse`      | (`userInfo`: [`OneTapExplicitSignInResponse`](#onetapexplicitsigninresponse)) => `void` | `Promise`<`void`> | Called when the user successfully signs in, or cancels the sign in, either using the web One-tap flow or the button flow.                                                                                                                                         |
 
-
 ---
 
 ### GoogleLogoButton
 
 A Google Sign-In button that follows Google's official branding guidelines. Intended for native apps. It renders null when used on the web.
-
-<!-- -->
 
 tip
 
@@ -1244,14 +1241,11 @@ The button should render its label using the [Roboto font](https://fonts.google.
 
 ```
 
-
 ---
 
 ### WebGoogleSigninButton
 
 This is the sign-in button that you can use in web apps. It renders `null` when used in native apps. It has a slightly different API than the native `GoogleSigninButton` component which is why it exists as a separate component.
-
-<!-- -->
 
 tip
 
@@ -1290,14 +1284,11 @@ All props are optional.
 | `logoAlignment?` | `"left"` | `"center"`                                                | The alignment of the logo on the button.                                  |
 | `onError?`       | `(error: Error) => void`                                              | Called when you try to render the button before the Client SDK is loaded. |
 
-
 ---
 
 ### Universal sign in
 
 This is Google's recommended way to implement Google Sign In. This API is available on Android, iOS, macOS and web (with a little extra work [described below](#web-support)). It is a replacement for the [Original Google sign in](/docs/original.md). The module APIs are named `GoogleOneTapSignIn` for historical reasons.
-
-<!-- -->
 
 tip
 
@@ -1392,8 +1383,6 @@ signature: (`params`?: [`OneTapSignInParams`](/docs/api.md#onetapsigninparams)) 
 
 If there is no user that was previously signed in, the returned promise resolves with [`NoSavedCredentialFound`](/docs/api.md#nosavedcredentialfound) object. In that case, you can call [`createAccount`](/docs/one-tap.md#createaccount) to start a flow to create a new account. You don't need to call `signIn` as a response to a user action - you can call it when your app starts or when suitable.
 
-<!-- -->
-
 UI screenshots
 
 | Android                                                                                                                                       | iOS                          | Web                                                                                                                                                                  |
@@ -1454,8 +1443,6 @@ const signIn = async () => {
 
 ***
 
-<!-- -->
-
 ##### Utility Functions[​](#utility-functions "Direct link to Utility Functions")
 
 tip
@@ -1483,8 +1470,6 @@ You don't need to call `createAccount` as a response to a user action - you can 
 
 Use `createAccount` if `signIn` resolved with [`NoSavedCredentialFound` result](/docs/api.md#nosavedcredentialfound), as indicated in the code snippet above.
 
-<!-- -->
-
 UI screenshots
 
 | Android                                 | iOS                                 | Web                                 |
@@ -1509,8 +1494,6 @@ signature: (`params`?: [`OneTapExplicitSignInParams`](/docs/api.md#onetapexplici
 | Web      | Presents a one-tap prompt. Same as `createAccount`.                                                                                                                                                                                                                                                                    |
 
 Preferably, call this method only as a reaction to when user taps a [sign in button](/docs/buttons/google-logo-button.md).
-
-<!-- -->
 
 UI screenshots
 
@@ -1599,8 +1582,6 @@ This method is used to request extra authorization from the user. Use this on An
 | Apple    | Calls [`addScopes`](/docs/original.md#addscopes). The resulting `accessToken` has access to the requested scopes. Use this if you want to read more user metadata than just the basic info.                                                |
 | Web      | Not implemented at the moment.                                                                                                                                                                                                             |
 
-<!-- -->
-
 UI screenshots
 
 | Android                                | iOS                                 |
@@ -1648,7 +1629,6 @@ As explained above, `iosClientId` can also be detected automatically - simply do
 #### Web support[​](#web-support "Direct link to Web support")
 
 [Learn more](/docs/web-support.md).
-
 
 ---
 
@@ -1761,8 +1741,6 @@ const signIn = async () => {
 ```
 
 ***
-
-<!-- -->
 
 ##### Utility Functions[​](#utility-functions "Direct link to Utility Functions")
 
@@ -1937,7 +1915,6 @@ You may also use this call at any time to find out if Google Play Services are a
 
 ![prompt install](/assets/images/prompt-install-b928a962a8d2c0a416628bffd0c95448.png)
 
-
 ---
 
 ## Guides
@@ -1989,7 +1966,6 @@ See [example usage](/docs/one-tap.md#signin).
 | `NULL_PRESENTER`              | Happens in the unlikely situation when the `Activity` (on Android) or `UIViewController` (on iOS) for presenting the sign in UI isn't available.                                                                                                                                                                                                                        |
 
 See [example usage](/docs/one-tap.md#signin).
-
 
 ---
 
@@ -2108,7 +2084,6 @@ const getCurrentUserInfo = async () => {
 
 ```
 
-
 ---
 
 ### Advanced security
@@ -2138,8 +2113,6 @@ const response = await GoogleOneTapSignIn.createAccount({
 ```
 
 `getUrlSafeNonce()` generates a URL-safe nonce. It can be implemented using `expo-crypto` or `react-native-get-random-values`:
-
-<!-- -->
 
 * expo-crypto
 * react-native-get-random-values
@@ -2277,7 +2250,6 @@ API keys and debug tokens are sensitive data. Keep them private.
 
 Read the [official documentation](https://developers.google.com/identity/sign-in/ios/appcheck/enable-enforcement) to understand how to enforce App Check.
 
-
 ---
 
 ### Testing
@@ -2356,14 +2328,11 @@ it('GoogleSignInComponent should display user name after signing in', async () =
 
 ```
 
-
 ---
 
 ### Web support
 
 The web implementation doesn't depend on React Native (or React Native Web). That means you can use it even with regular web apps created with NextJS, Vite and etc.
-
-<!-- -->
 
 tip
 
@@ -2435,14 +2404,11 @@ One-tap UI may not always be available: This happens if you disable it ([`skipPr
 
 The methods on the web are the same as on native — see [here](/docs/one-tap.md#methods) for their docs.
 
-
 ---
 
 ## Help
 
 ### Configuration Doctor
-
-<!-- -->
 
 tip
 
@@ -2507,7 +2473,6 @@ Next steps:
 
 * [Collecting configuration information](/docs/setting-up/get-config-file.md)
 
-
 ---
 
 ### FAQ / Troubleshooting
@@ -2570,7 +2535,6 @@ Your `Url Schemes` configuration is incorrect.
 If you use Expo, verify that the [config plugin](/docs/setting-up/expo.md#add-config-plugin) is configured correctly.
 
 In vanilla React Native projects, add URL type [like this](https://react-native-google-signin.github.io/docs/setting-up/ios#xcode-configuration).
-
 
 ---
 
