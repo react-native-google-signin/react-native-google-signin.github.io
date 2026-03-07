@@ -1,0 +1,60 @@
+# FAQ / Troubleshooting
+
+## Android[​](#android "Direct link to Android")
+
+### Sign in result is `cancelled` even though the user did not cancel the flow[​](#unexpected_cancelled "Direct link to unexpected_cancelled")
+
+You may be hitting an [error in the Android SDK](https://issuetracker.google.com/issues/424210681). This error is usually observed with `presentExplicitSignIn`. Follow the [`DEVELOPER_ERROR paragraph`](#developer_error) to resolve it.
+
+### Login does not work when downloading from the Play Store.[​](#login-does-not-work-when-downloading-from-the-play-store "Direct link to Login does not work when downloading from the Play Store.")
+
+See [`DEVELOPER_ERROR` paragraph](#developer_error).
+
+### `DEVELOPER_ERROR` or `code: 10` or `Developer console is not set up correctly` error message[​](#developer_error "Direct link to developer_error")
+
+This is always (! *absolutely always* !) a configuration mismatch between your app and the server-side setup (in Firebase or Google Cloud console).
+
+Firstly, if you are using Firebase Auth, verify Google is enabled as a Sign-in method in Firebase Console (Build -> Authentication -> Sign-in method).
+
+Then: if you have the APK (on your phone, or computer) that gives this error, we recommend to run the [Configuration Doctor](/docs/config-doctor.md) and follow its instructions:
+
+```bash
+npx @react-native-google-signin/config-doctor
+
+```
+
+Otherwise:
+
+* Follow the [setup guide](/docs/setting-up/get-config-file.md) and perform its steps once again.
+* If you're passing `webClientId` in the configuration object to `GoogleSignin.configure()`, make sure it's correct and that it is of type web (NOT Android!). You can get your `webClientId` from [Google Developer Console](https://console.developers.google.com/apis/credentials). It is listed under "OAuth 2.0 client IDs".
+* [Search the issue tracker](https://github.com/react-native-google-signin/google-signin/issues?q=is%3Aissue+DEVELOPER+ERROR+is%3Aclosed) for old reports of the error.
+
+### Login does not work when using Internal App Sharing.[​](#login-does-not-work-when-using-internal-app-sharing "Direct link to Login does not work when using Internal App Sharing.")
+
+If you get a `DEVELOPER_ERROR` when using Internal App Sharing, it is because Google resigns your application with its own key.
+
+See [`DEVELOPER_ERROR` paragraph](#developer_error).
+
+### "A non-recoverable sign in failure occurred"[​](#a-non-recoverable-sign-in-failure-occurred "Direct link to \"A non-recoverable sign in failure occurred\"")
+
+See [this comment](https://github.com/react-native-community/google-signin/issues/659#issuecomment-513555464). Or [this SO question](https://stackoverflow.com/questions/53816227/google-signin-sdk-is-failing-by-throwing-error-a-non-recoverable-sign-in-failur).
+
+### Package name !== application id[​](#package-name--application-id "Direct link to Package name !== application id")
+
+When adding a new oauth client, google asks you to add your package name. In some cases your package name is not equal to your application id. Check if your package name in the `AndroidManifest.xml` is the same as your application/bundle id. Find your application id in the play console or `android/app/build.gradle`. The format looks like `com.yourapp.id`.
+
+## iOS[​](#ios "Direct link to iOS")
+
+### Sign in result is `cancelled` even though the user did not cancel the flow[​](#sign-in-result-is-cancelled-even-though-the-user-did-not-cancel-the-flow "Direct link to sign-in-result-is-cancelled-even-though-the-user-did-not-cancel-the-flow")
+
+Make sure you're not presenting the sign-in flow while a modal (e.g. with a loading indicator) is already presented.
+
+### The app crashes when tapping the Sign In button[​](#the-app-crashes-when-tapping-the-sign-in-button "Direct link to The app crashes when tapping the Sign In button")
+
+Along with "Your app is missing support for the following URL schemes" error in Xcode console.
+
+Your `Url Schemes` configuration is incorrect.
+
+If you use Expo, verify that the [config plugin](/docs/setting-up/expo.md#add-config-plugin) is configured correctly.
+
+In vanilla React Native projects, add URL type [like this](https://react-native-google-signin.github.io/docs/setting-up/ios#xcode-configuration).

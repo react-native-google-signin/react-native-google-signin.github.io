@@ -1,0 +1,165 @@
+tip
+
+The functionality covered in this page is available in the licensed version. [You can get a license here](https://universal-sign-in.com/#pricing) ⭐️.
+
+# Advanced security
+
+There are 2 security-related features available:
+
+1. [Custom nonce (on all platforms)](#custom-nonce)
+2. [App Check for iOS](#appcheck)
+
+## Custom nonce[​](#custom-nonce "Direct link to Custom nonce")
+
+[Nonce](https://en.wikipedia.org/wiki/Cryptographic_nonce) (number used once) is a security measure used to mitigate replay attacks and to associate a Client session with an ID Token.
+
+The authentication APIs in [Universal Sign-In](/docs/one-tap.md) for Apple, Android and web allow you to specify nonce. On native platforms, if it's not specified, a cryptographically random value is generated internally.
+
+Example usage:
+
+```ts
+const response = await GoogleOneTapSignIn.createAccount({
+  nonce: getUrlSafeNonce(),
+});
+
+```
+
+`getUrlSafeNonce()` generates a URL-safe nonce. It can be implemented using `expo-crypto` or `react-native-get-random-values`:
+
+<!-- -->
+
+* expo-crypto
+* react-native-get-random-values
+
+```ts
+import * as Crypto from 'expo-crypto';
+
+export function getUrlSafeNonce(byteLength = 32) {
+  if (byteLength < 1) {
+    throw new Error('Byte length must be positive');
+  }
+
+  const randomBytes = Crypto.getRandomValues(new Uint8Array(byteLength));
+  return btoa(String.fromCharCode(...randomBytes))
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/[=]/g, '');
+}
+
+```
+
+```ts
+import 'react-native-get-random-values';
+
+export function getUrlSafeNonce(byteLength = 32) {
+  if (byteLength < 1) {
+    throw new Error('Byte length must be positive');
+  }
+
+  const randomBytes = crypto.getRandomValues(new Uint8Array(byteLength));
+  return btoa(String.fromCharCode(...randomBytes))
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/[=]/g, '');
+}
+
+```
+
+### Usage with Supabase[​](#usage-with-supabase "Direct link to Usage with Supabase")
+
+Auth providers such as [Supabase](https://supabase.com/docs/reference/javascript/auth-signinwithidtoken) require passing SHA-256 hash (digest) of the nonce ([source](https://github.com/supabase/auth-js/blob/dfb40d24188f7e8b0d34e51ded15582086250c51/src/lib/types.ts#L612)). This can be done as follows:
+
+* expo-crypto
+* react-native-quick-crypto
+
+```ts
+import { digestStringAsync, CryptoDigestAlgorithm } from 'expo-crypto';
+
+export const getNonce = async () => {
+  // `rawNonce` goes to Supabase's signInWithIdToken().
+  // Supabase makes a hash of `rawNonce` and compares it with the `nonceDigest`
+  // which is included in the ID token from RN-google-signin.
+  const rawNonce = getUrlSafeNonce();
+  // `nonceDigest` (SHA-256 hash, hex-encoded) goes to the `nonce` parameter in RN-google-signin APIs
+  const nonceDigest = await digestStringAsync(
+    CryptoDigestAlgorithm.SHA256,
+    rawNonce,
+  );
+  return { rawNonce, nonceDigest };
+};
+
+```
+
+```ts
+import QuickCrypto from 'react-native-quick-crypto';
+
+const getNonce = () => {
+  // `rawNonce` goes to Supabase's signInWithIdToken().
+  // Supabase makes a hash of `rawNonce` and compares it with the `nonceDigest`
+  // which is included in the ID token from RN-google-signin.
+  const rawNonce = getUrlSafeNonce();
+  // `nonceDigest` (SHA-256 hash, hex-encoded) goes to the `nonce` parameter in RN-google-signin APIs
+  const nonceDigest = QuickCrypto.createHash('sha256')
+    .update(rawNonce)
+    .digest('hex');
+  return { rawNonce, nonceDigest };
+};
+
+```
+
+## App Check for iOS (advanced)[​](#appcheck "Direct link to App Check for iOS (advanced)")
+
+App Check helps protect your apps from abuse by preventing unauthorized clients from authenticating using Google Sign-in: only the apps you've authorized can acquire access tokens and ID tokens from Google's OAuth 2.0 and OpenID Connect endpoint.
+
+[Read more about App Check](https://developers.google.com/identity/sign-in/ios/appcheck) to understand it.
+
+### Setup[​](#setup "Direct link to Setup")
+
+To set up App Check:
+
+1. Set up Google API Console / Firebase console by following ["1. Set up your project"](https://developers.google.com/identity/sign-in/ios/appcheck/get-started#project-setup). Do not follow step 2.
+
+2. Add **App Attest** capability to your app (as in [here](https://developers.google.com/identity/sign-in/ios/appcheck/get-started#install-sdk)). If you're using Expo, the capability can be added according to the [iOS capabilities documentation](https://docs.expo.dev/build-reference/ios-capabilities/).
+
+3. (skip if you use Expo): Ensure that `GIDClientID` (the iOS client ID) is set in your `Info.plist`. Expo config plugin does this for you.
+
+### Usage[​](#usage "Direct link to Usage")
+
+Call `GoogleOneTapSignIn.enableAppCheck()` as shown below. Do this early, before invoking any authentication apis. The call either resolves when it succeeds or rejects with an error. On platforms other than iOS, the method is a no-op and resolves.
+
+* Production environment
+* Debug provider (recommended)
+* Debug provider (alternative)
+
+```ts
+await GoogleOneTapSignIn.enableAppCheck();
+
+```
+
+Use `APP_CHECK_API_KEY` [env variable in Xcode](https://stackoverflow.com/a/76212610/2070942) to configure the [debug provider](https://developers.google.com/identity/sign-in/ios/appcheck/debug-provider) with the API key. Then call:
+
+```ts
+await GoogleOneTapSignIn.enableAppCheck();
+
+```
+
+danger
+
+API keys and debug tokens are sensitive data. Keep them private.
+
+Configure the [debug provider](https://developers.google.com/identity/sign-in/ios/appcheck/debug-provider) with the API key:
+
+```ts
+await GoogleOneTapSignIn.enableAppCheck({
+  debugProviderAPIKey: config.apiKey,
+});
+
+```
+
+danger
+
+API keys and debug tokens are sensitive data. Keep them private.
+
+### Enable App Check enforcement[​](#enable-app-check-enforcement "Direct link to Enable App Check enforcement")
+
+Read the [official documentation](https://developers.google.com/identity/sign-in/ios/appcheck/enable-enforcement) to understand how to enforce App Check.

@@ -1,0 +1,119 @@
+# Installation
+
+There are two ways to consume the package: [paid](https://universal-sign-in.com) and free. If you are an EAS customer, you may be able to access the paid version for free, [learn more](https://forms.gle/tpP7TfUGW1CwgaEZ8).
+
+Why paid? According to the [State of React Native Survey](https://results.2024.stateofreactnative.com/en-US/opinions/#opinions_pain_points_multiple), unmaintained packages are **the #1 pain point** of the React Native ecosystem. Your purchase enables the module to be rock-solid, and contributions to upstream SDKs such as [1](https://github.com/openid/AppAuth-iOS/pull/788), [2](https://github.com/google/GoogleSignIn-iOS/pull/402), [3](https://github.com/googlesamples/google-services/issues/426), [4](https://github.com/google/GoogleSignIn-iOS/issues/457), [5](https://issuetracker.google.com/issues/424210681), [6](https://issuetracker.google.com/issues/474817166).
+
+### Universal Sign In (premium)[​](#premium "Direct link to Universal Sign In (premium)")
+
+⭐️ **Key Features**:
+
+* **Cross-Platform**: Unified APIs which work on **Android**, **iOS**, **Web**, and **macOS**.
+
+  * Android: Built with [Credential Manager library](https://developers.google.com/identity/android-credential-manager)
+  * Web: Uses [Sign In with Google for Web](https://developers.google.com/identity/gsi/web/guides/features)
+  * iOS & macOS: Powered by the [Google Sign-In SDK](https://developers.google.com/identity/sign-in/ios/start)
+
+* **Licensed:** see [pricing](https://universal-sign-in.com/#pricing) and [license](https://universal-sign-in.com/license).
+
+* **Trusted**: A total of 1 mil+ npm package downloads.
+
+* **Faster**: Reduce sign-up and sign-in times on Android, according to [Google](https://developer.android.com/identity/sign-in/legacy-gsi-migration#authentication).
+
+* **See the UI**: [screenshots](/docs/screenshots) of the features.
+
+* **Widely compatible & stable:** Both old and [new architecture](https://reactnative.dev/architecture/landing-page) of React Native are supported. See version [compatibility table](#requirements) below.
+
+🔧 **Easier setup**:
+
+* Android [Config Doctor](/docs/config-doctor.md) that might save you from pulling your hair out.
+* Automatic detection of [configuration parameters](/docs/one-tap.md#automatic-config) for faster integration.
+
+🛡️ **Advanced [security features](/docs/security.md)**
+
+📱 **An example app** — to showcase all features on native and web
+
+### Public version (free)[​](#public-version-free "Direct link to Public version (free)")
+
+Available on the public npm registry, this version:
+
+* Uses the functional, but deprecated [legacy Android Google Sign-In](https://web.archive.org/web/20240308064911/https://developers.google.com/identity/sign-in/android/start-integrating). The free package will continue to use a version where the deprecated but functional SDK is present.
+* Has platform support limited to Android and iOS.
+* Contains none of the extra features listed above.
+
+> To migrate from the public version to the premium one, follow the [migration guide](/docs/migrating.md#migrating-from-original-to-universal-sign-in).
+
+## Accessing the private npm package[​](#package-manager-setup "Direct link to Accessing the private npm package")
+
+The private npm package is like any other, but it's hosted on the [GitHub npm packages registry](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry), not the public npm registry. Therefore, a small bit of setup is needed:
+
+1. [Obtain here](https://github.com/settings/tokens/new?description=react-native-google-sign-in\&scopes=read:packages) a Personal Access Token with `packages:read` permission and set expiration to "No expiration".
+
+2. Set up your package manager to fetch the package from the GH packages registry. In this example, we're using an `NPM_TOKEN_GOOGLE_SIGN_IN` environment variable.
+
+<!-- -->
+
+* yarn v3+
+* npm / yarn v1
+* CI environments (GH Actions...)
+
+create a `.yarnrc.yml` file in your project root with the following content:
+
+.yarnrc.yml
+
+```yml
+npmScopes:
+  react-native-google-signin:
+    npmRegistryServer: https://npm.pkg.github.com
+    npmAuthToken: '${NPM_TOKEN_GOOGLE_SIGN_IN}'
+
+```
+
+create a `.npmrc` file in your project root with the following content:
+
+.npmrc
+
+```txt
+//npm.pkg.github.com/:_authToken=${NPM_TOKEN_GOOGLE_SIGN_IN}
+
+@react-native-google-signin:registry=https://npm.pkg.github.com/
+
+```
+
+CI environment setup is similar to the local one: you also need a `.npmrc` (or similar) file. Follow [this GitHub Actions example](https://gist.github.com/nandorojo/46b3e46de12177b9ad7e4d454310de21#file-private-npm-in-gh-actions-md) - other CI providers require very similar steps.
+
+If you use another package manager ([such as Bun](https://bun.sh/docs/install/registries)), refer to its documentation for setting up a custom registry.
+
+## Installing[​](#installing "Direct link to Installing")
+
+* yarn
+* npm
+
+```bash
+yarn add @react-native-google-signin/google-signin@latest
+
+```
+
+```bash
+npm i @react-native-google-signin/google-signin@latest
+
+```
+
+After installing: if you're using the Universal version, open the lockfile (`yarn.lock` / `package-lock.json`...) and verify that the package is fetched from the GitHub registry (the entry must point to `npm.pkg.github.com`, not `registry.npmjs.org`). If it does not, it means the package manager is not configured correctly — try uninstalling and reinstalling the package.
+
+There are several guides to follow now:
+
+* [Expo guide](/docs/setting-up/expo.md) for native mobile apps built with Expo
+* [Web guide](/docs/setting-up/web.md) if you want to use the package on web
+* If you're not using Expo but plain React Native, follow [Android guide](/docs/setting-up/android.md) and [iOS guide](/docs/setting-up/ios.md)
+
+## Requirements[​](#requirements "Direct link to Requirements")
+
+For latest version of Universal Sign In, `compileSdkVersion` must be <!-- -->>=<!-- --> 35 and `kotlinVersion` must be <!-- -->>=<!-- --> 2.0.21 in your Android project. If you use Expo SDK 53 or newer, these requirements are already met. Use [`expo-build-properties`](https://docs.expo.dev/versions/latest/sdk/build-properties/#example-appjson-with-config-plugin) to specify these values on Expo SDK <!-- --><=<!-- --> 52.
+
+The latest version of the Universal Sign In package supports (use older versions of the package if you run older React Native / Expo):
+
+|              | supported range |
+| ------------ | --------------- |
+| expo         | 52.0.40 - 55    |
+| react-native | 0.76.0 - 0.84   |
