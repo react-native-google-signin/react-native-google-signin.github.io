@@ -29,12 +29,12 @@ However, be advised that in the end, you need to get the SHA-1 certificate finge
 
 <!-- -->
 
-* A device or any APK file
+* ✅ Any APK or device
 * Google Play Store (when downloading from it)
 * EAS Build
 * Local build
 
-Use the [Configuration Doctor](/docs/config-doctor.md). (Requires an [Universal sign in](/docs/install.md#premium) license.)
+Use the [Configuration Doctor](/docs/config-doctor.md). This is the **only universal option** — it works regardless of how the APK was built or where it came from. The other tabs cover specific scenarios.
 
 1. Get a device / emulator with the app installed, or get the APK (build it locally or in cloud, download from the Play Console / Play Store...)
 2. Run the tool and follow its instructions:

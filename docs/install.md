@@ -55,6 +55,8 @@ The private npm package is like any other, but it's hosted on the [GitHub npm pa
 
 * yarn v3+
 * npm / yarn v1
+* pnpm
+* bun
 * CI environments (GH Actions...)
 
 create a `.yarnrc.yml` file in your project root with the following content:
@@ -80,14 +82,37 @@ create a `.npmrc` file in your project root with the following content:
 
 ```
 
-CI environment setup is similar to the local one: you also need a `.npmrc` (or similar) file. Follow [this GitHub Actions example](https://gist.github.com/nandorojo/46b3e46de12177b9ad7e4d454310de21#file-private-npm-in-gh-actions-md) - other CI providers require very similar steps.
+create a `.npmrc` file in your project root with the following content (pnpm respects `.npmrc`):
 
-If you use another package manager ([such as Bun](https://bun.sh/docs/install/registries)), refer to its documentation for setting up a custom registry.
+.npmrc
+
+```txt
+//npm.pkg.github.com/:_authToken=${NPM_TOKEN_GOOGLE_SIGN_IN}
+
+@react-native-google-signin:registry=https://npm.pkg.github.com/
+
+```
+
+create a `bunfig.toml` file in your project root with the following content:
+
+bunfig.toml
+
+```toml
+[install.scopes]
+"@react-native-google-signin" = { url = "https://npm.pkg.github.com/", token = "$NPM_TOKEN_GOOGLE_SIGN_IN" }
+
+```
+
+Alternatively, [bun also reads `.npmrc` files](https://bun.sh/docs/pm/npmrc#configure-options-for-a-specific-registry), so the npm setup above works too.
+
+CI environment setup is similar to the local one: you also need a `.npmrc` (or similar) file. Follow [this GitHub Actions example](https://gist.github.com/nandorojo/46b3e46de12177b9ad7e4d454310de21#file-private-npm-in-gh-actions-md) - other CI providers require very similar steps.
 
 ## Installing[​](#installing "Direct link to Installing")
 
 * yarn
 * npm
+* pnpm
+* bun
 
 ```bash
 yarn add @react-native-google-signin/google-signin@latest
@@ -96,6 +121,16 @@ yarn add @react-native-google-signin/google-signin@latest
 
 ```bash
 npm i @react-native-google-signin/google-signin@latest
+
+```
+
+```bash
+pnpm add @react-native-google-signin/google-signin@latest
+
+```
+
+```bash
+bun add @react-native-google-signin/google-signin@latest
 
 ```
 
@@ -116,4 +151,4 @@ The latest version of the Universal Sign In package supports (use older versions
 |              | supported range |
 | ------------ | --------------- |
 | expo         | 52.0.40 - 55    |
-| react-native | 0.76.0 - 0.84   |
+| react-native | 0.76.0 - 0.85   |
