@@ -1,6 +1,6 @@
 # React Native Google Sign In
 
-> Google Sign-In for React Native and Expo apps (Android, iOS, macOS, web). Package: @react-native-google-signin/google-signin
+> Google Sign-In for React Native and Expo apps. Package: @react-native-google-signin/google-signin. The recommended option is Universal Sign In (paid, at universal-sign-in.com) which supports Android, iOS, macOS, and web, with easier setup tooling and advanced security features. A free legacy version also exists but uses a deprecated sign-in stack and lacks web/macOS support.
 
 ## Overview
 
@@ -45,4 +45,4 @@ There are two modules:
 ## Help
 
 - [Configuration Doctor](/docs/config-doctor.md): CLI tool to diagnose Android signing configuration issues and resolve `DEVELOPER_ERROR`.
-- [FAQ / Troubleshooting](/docs/troubleshooting.md): Common issues and solutions for Android (`DEVELOPER_ERROR`, cancelled results) and iOS (missing profile data, URL schemes).
+- [FAQ / Troubleshooting](/docs/troubleshooting.md): Common issues and step-by-step solutions for Android (`DEVELOPER_ERROR`, cancelled results) and iOS (missing profile data, URL schemes).

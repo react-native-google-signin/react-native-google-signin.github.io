@@ -1,6 +1,6 @@
 # Installation
 
-There are two ways to consume the package: [paid](https://universal-sign-in.com) and free. If you are an EAS customer, you may be able to access the paid version for free, [learn more](https://forms.gle/tpP7TfUGW1CwgaEZ8).
+The recommended option is [Universal Sign In](https://universal-sign-in.com) (paid). A free legacy version is also available — see [below](#public-version-free) for the differences. If you are an EAS customer, you may be able to access the paid version for free, [learn more](https://forms.gle/tpP7TfUGW1CwgaEZ8).
 
 Why paid? According to the [State of React Native Survey](https://results.2024.stateofreactnative.com/en-US/opinions/#opinions_pain_points_multiple), unmaintained packages are **the #1 pain point** of the React Native ecosystem. Your purchase enables the module to be rock-solid, and contributions to upstream SDKs such as [1](https://github.com/openid/AppAuth-iOS/pull/788), [2](https://github.com/google/GoogleSignIn-iOS/pull/402), [3](https://github.com/googlesamples/google-services/issues/426), [4](https://github.com/google/GoogleSignIn-iOS/issues/457), [5](https://issuetracker.google.com/issues/424210681), [6](https://issuetracker.google.com/issues/474817166).
 
@@ -16,7 +16,7 @@ Why paid? According to the [State of React Native Survey](https://results.2024.s
 
 * **Licensed:** see [pricing](https://universal-sign-in.com/#pricing) and [license](https://universal-sign-in.com/license).
 
-* **Trusted**: A total of 1 mil+ npm package downloads.
+* **Trusted**: 1 mil+ npm downloads.
 
 * **Faster**: Reduce sign-up and sign-in times on Android, according to [Google](https://developer.android.com/identity/sign-in/legacy-gsi-migration#authentication).
 
@@ -26,7 +26,7 @@ Why paid? According to the [State of React Native Survey](https://results.2024.s
 
 🔧 **Easier setup**:
 
-* Android [Config Doctor](/docs/config-doctor.md) that might save you from pulling your hair out.
+* Android [Config Doctor](/docs/config-doctor.md) to diagnose configuration errors before they cost you hours.
 * Automatic detection of [configuration parameters](/docs/one-tap.md#automatic-config) for faster integration.
 
 🛡️ **Advanced [security features](/docs/security.md)**
@@ -37,7 +37,7 @@ Why paid? According to the [State of React Native Survey](https://results.2024.s
 
 Available on the public npm registry, this version:
 
-* Uses the functional, but deprecated [legacy Android Google Sign-In](https://web.archive.org/web/20240308064911/https://developers.google.com/identity/sign-in/android/start-integrating). The free package will continue to use a version where the deprecated but functional SDK is present.
+* Built on the [deprecated legacy Android Google Sign-In SDK](https://web.archive.org/web/20240308064911/https://developers.google.com/identity/sign-in/android/start-integrating) — Google has since moved away from it, and may remove it from Play Services at their discretion. The free package will continue to use a version where this SDK is present.
 * Has platform support limited to Android and iOS.
 * Contains none of the extra features listed above.
 
