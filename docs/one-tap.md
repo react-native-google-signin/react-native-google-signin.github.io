@@ -28,7 +28,7 @@ import {
 
 <GoogleLogoButton onPress={startSignInFlow} label="Sign in with Google" />;
 
-const startSignInFlow = async () => {
+export const startSignInFlow = async () => {
   try {
     GoogleOneTapSignIn.configure(); // move this to after your app starts
     await GoogleOneTapSignIn.checkPlayServices();
@@ -136,10 +136,6 @@ const signIn = async () => {
     console.error(error);
     if (isErrorWithCode(error)) {
       switch (error.code) {
-        case statusCodes.ONE_TAP_START_FAILED:
-          // Android-only, you probably have hit rate limiting.
-          // You can still call `presentExplicitSignIn` in this case.
-          break;
         case statusCodes.PLAY_SERVICES_NOT_AVAILABLE:
           // Android: play services not available or outdated.
           // Get more details from `error.userInfo`.
