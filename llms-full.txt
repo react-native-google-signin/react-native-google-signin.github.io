@@ -31,7 +31,7 @@ Universal Sign In license
 
 Buy a license, then use the private npm registry setup below to add the package to your app.
 
-Buy license
+[Buy license](https://www.creem.io/payment/prod_2zElFBVDXGigzZTiK4MvYX)
 
 ##### Universal Sign In (premium)[​](#premium "Direct link to Universal Sign In (premium)")
 
