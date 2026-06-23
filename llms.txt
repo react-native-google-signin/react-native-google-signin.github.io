@@ -36,7 +36,7 @@ There are two modules:
 
 ## Guides
 
-- [Error handling](/docs/errors.md): Error handling guide. Covers `isErrorWithCode` helper, error codes (`SIGN_IN_CANCELLED`, `PLAY_SERVICES_NOT_AVAILABLE`, etc.), and best practices.
+- [Error handling](/docs/errors.md): Error handling guide. Covers `isErrorWithCode` helper, stable status codes, and best practices.
 - [Migration guides](/docs/migrating.md): Migration guides: from Original to Universal Sign In module, and from the legacy JS API to the new API.
 - [Advanced security](/docs/security.md): Advanced security features: custom nonce support on all platforms and App Check for iOS.
 - [Testing](/docs/testing.md): How to mock Google Sign-In in Jest tests for both the Universal and Original modules.

@@ -34,7 +34,7 @@ import { statusCodes } from '@react-native-google-signin/google-signin';
 
 ```
 
-Status codes are useful when determining which kind of error has occurred during the sign-in process. Under the hood, these constants are derived from native error codes and are platform-specific. Always compare `error.code` to `statusCodes.*` and do not rely on the raw value of `error.code`.
+Status codes are useful when determining which kind of error has occurred during the sign-in process. These constants are stable canonical values exported by the library, so you can compare `error.code` to `statusCodes.*` with good TypeScript support. Less common native failures may still surface other string values.
 
 See [example usage](/docs/one-tap.md#signin).
 
