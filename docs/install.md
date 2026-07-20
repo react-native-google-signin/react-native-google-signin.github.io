@@ -8,7 +8,7 @@ Universal Sign In license
 
 ## Ready to install Universal Sign In?
 
-Buy a license, then use the private npm registry setup below to add the package to your app.
+Buy a license, then follow the private npm registry setup below to add the package to your app.
 
 [Buy license](https://www.creem.io/payment/prod_2zElFBVDXGigzZTiK4MvYX)
 
@@ -160,7 +160,7 @@ The latest version of the Universal Sign In package supports (use older versions
 
 |              | supported range |
 | ------------ | --------------- |
-| expo         | 52.0.40 - 56    |
+| expo         | 52.0.40 - 57    |
 | react-native | 0.76.0 - 0.86   |
 
 > We recommend [Expo](https://expo.dev) and [EAS](https://expo.dev/eas) for building and deploying your React Native app. Expo offers the best developer experience and is well-supported by this library.

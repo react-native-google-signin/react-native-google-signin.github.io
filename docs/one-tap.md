@@ -16,7 +16,7 @@ The functionality covered in this page is available in the licensed version. [Yo
 
 ## Usage[​](#usage "Direct link to Usage")
 
-You can copy-paste this snippet to get a complete sign-in flow quickly. Read more about the methods below.
+You can copy-paste this snippet to get a complete sign-in flow quickly. For most apps, `authenticate` is the API to use.
 
 example of going through the sign in flow
 
@@ -26,49 +26,40 @@ import {
   GoogleLogoButton,
 } from '@react-native-google-signin/google-signin';
 
-<GoogleLogoButton onPress={startSignInFlow} label="Sign in with Google" />;
+<GoogleLogoButton
+  onPress={authenticateWithGoogle}
+  label="Sign in with Google"
+/>;
 
-export const startSignInFlow = async () => {
-  try {
-    GoogleOneTapSignIn.configure(); // move this to after your app starts
-    await GoogleOneTapSignIn.checkPlayServices();
-    const signInResponse = await GoogleOneTapSignIn.signIn();
-    if (signInResponse.type === 'success') {
-      // use signInResponse.data
-    } else if (signInResponse.type === 'noSavedCredentialFound') {
-      // the user wasn't previously signed into this app
-      const createResponse = await GoogleOneTapSignIn.createAccount();
-      if (createResponse.type === 'success') {
-        // use createResponse.data
-      } else if (createResponse.type === 'noSavedCredentialFound') {
-        // no Google user account was present on the device yet (unlikely but possible)
-        const explicitResponse =
-          await GoogleOneTapSignIn.presentExplicitSignIn();
+export const authenticateWithGoogle = async () => {
+  GoogleOneTapSignIn.configure({
+    webClientId: 'autoDetect',
+  }); // move this to after your app starts
 
-        if (explicitResponse.type === 'success') {
-          // use explicitResponse.data
-        }
-      }
-    }
-    // the else branches correspond to the user canceling the sign in
-  } catch (error) {
-    // handle error
+  const { user, error, isCancelled } = await GoogleOneTapSignIn.authenticate();
+
+  if (user) {
+    // use user
+  } else if (isCancelled) {
+    // the user cancelled the flow
+  } else if (error) {
+    // handle error.code
   }
 };
 
 ```
 
-Note that on Apple and Android, you can combine the Universal sign in methods with those one from the [Original Google Sign In](/docs/original.md). To do that, use the Universal sign in to sign in the user. Then call `signInSilently()` and then (for example) `getCurrentUser()` to get the current user's information. However, this shouldn't be necessary because this module should cover all your needs. Please open an issue if that's not the case.
+Note that on Apple and Android, you can combine the Universal sign in methods with methods from the [Original Google Sign In](/docs/original.md). To do that, use the Universal sign in to sign in the user. Then call `signInSilently()` and then (for example) `getCurrentUser()` to get the current user's information. However, this shouldn't be necessary because this module should cover all your needs. Please open an issue if that's not the case.
 
 ***
 
-## Methods[​](#methods "Direct link to Methods")
+## Main Methods[​](#main-methods "Direct link to Main Methods")
 
 ### `configure`[​](#configure "Direct link to configure")
 
 signature: (`params`: [`OneTapConfigureParams`](/docs/api.md#onetapconfigureparams)) => `void`
 
-It is mandatory to call `configure` before attempting to call any of the sign-in methods. This method is synchronous, meaning you can call e.g. `signIn` right after it. Typically, you would call `configure` only once, soon after your app starts.
+It is mandatory to call `configure` before attempting to call any of the sign-in methods. This method is synchronous, meaning you can call e.g. `authenticate` right after it. Typically, you would call `configure` only once, soon after your app starts.
 
 `webClientId` is a required parameter. Use `"autoDetect"` for [automatic webClientId detection](#automatic-config).
 
@@ -85,6 +76,120 @@ GoogleOneTapSignIn.configure({
 
 ***
 
+### `authenticate`[​](#authenticate "Direct link to authenticate")
+
+signature on native platforms: (`params`?: [`OneTapAuthenticateParams`](/docs/api.md#onetapauthenticateparams)) => `Promise`<[`OneTapAuthenticateResponse`](/docs/api.md#onetapauthenticateresponse)>
+
+signature on web: (`params`: [`OneTapAuthenticateParams`](/docs/api.md#onetapauthenticateparams), `callbacks`: [`WebOneTapAuthenticateCallbacks`](/docs/api.md#webonetapauthenticatecallbacks)) => `void`
+
+This is the recommended way to authenticate a user.
+
+On Android, iOS and macOS, `authenticate` runs the complete authentication sequence for you. It [checks Play Services](#checkplayservices) on Android, tries [`signIn`](#signin) to restore a saved credential without user interaction, calls [`createAccount`](#createaccount) if no saved credential is found, and finally calls [`presentExplicitSignIn`](#presentexplicitsignin) if the user still needs to pick or add an account. You only handle the final outcome: `user`, `error`, or `isCancelled`. It does not return `noSavedCredentialFound`; that case is handled internally.
+
+On web, `authenticate` initializes the Google Identity Services One Tap listener through the web `signIn` implementation. It reports success, cancellation, and typed errors through `onResponse`. The method is callback-based because the Google Identity Services SDK can report that One Tap is unavailable and still later return a successful sign-in from the Google Sign-In button. The `onResponse` callback may be called more than once.
+
+Example of calling the authenticate() method
+
+```ts
+import {
+  GoogleOneTapSignIn,
+  statusCodes,
+} from '@react-native-google-signin/google-signin';
+
+const { user, error, isCancelled } = await GoogleOneTapSignIn.authenticate();
+
+if (user) {
+  // use user
+} else if (isCancelled) {
+  // the user cancelled the flow
+} else if (error) {
+  switch (error.code) {
+    case statusCodes.PLAY_SERVICES_NOT_AVAILABLE:
+      // Android: play services not available or outdated.
+      // Web: Google Client Library is not loaded yet.
+      break;
+    default:
+    // something else happened
+  }
+}
+
+```
+
+See [Web support](/docs/web-support.md#usage) for the web callback example.
+
+***
+
+### `requestAuthorization`[​](#requestauthorization "Direct link to requestauthorization")
+
+signature: (`params`: [`RequestAuthorizationParams`](/docs/api.md#requestauthorizationparams)) => `Promise`<[`AuthorizationResponse`](/docs/api.md#authorizationresponse)>
+
+The underlying Android SDK separates authentication and authorization - that means that on Android you can request an access token and call Google APIs on behalf of the user without previously signing the user in.
+
+This method is used to request extra authorization from the user. Use this on Android to obtain server-side access (offline access) to the user's data or for requesting an access token that has access to additional scopes.
+
+| Platform | Behavior                                                                                                                                                                                                                                   |
+| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Android  | Presents a modal that asks user for additional access to their Google account. Uses [AuthorizationRequest.Builder](https://developers.google.com/android/reference/com/google/android/gms/auth/api/identity/AuthorizationRequest.Builder). |
+| Apple    | Calls [`addScopes`](/docs/original.md#addscopes). The resulting `accessToken` has access to the requested scopes. Use this if you want to read more user metadata than just the basic info.                                                |
+| Web      | Not implemented at the moment.                                                                                                                                                                                                             |
+
+<!-- -->
+
+UI screenshots
+
+| Android                                | iOS                                 |
+| -------------------------------------- | ----------------------------------- |
+| ![](/img/onetap/authorize-android.jpg) | ![](/img/onetap/add-scopes-ios.png) |
+
+***
+
+### `signOut`[​](#signout "Direct link to signout")
+
+signature: () => `Promise`<`null`>
+
+Signs out the current user. This disables the automatic sign-in.
+
+Returns a `Promise` that resolves with `null` or rejects in case of error.
+
+```ts
+await GoogleOneTapSignIn.signOut();
+
+```
+
+***
+
+## Automatic `webClientId` & `iosClientId` detection[​](#automatic-config "Direct link to automatic-config")
+
+If you use Expo (with the config plugin and prebuild), or if you're using Firebase, you don't need to provide the `iosClientId` parameter to the `configure` method.
+
+Additionally, this module can automatically detect the `webClientId` from Firebase's configuration file (does not work on web where you need to provide it explicitly).
+
+This is useful if you're using Firebase and want to avoid manually setting the `webClientId` in your code, especially if you have multiple environments (e.g. staging, production).
+
+To use this feature:
+
+1. Add `WEB_CLIENT_ID` entry to the `GoogleService-Info.plist` file.
+
+On Android, the `google-services.json` file already contains the web client ID information. Unfortunately, it's not the case on iOS, so we need to add it ourselves.
+
+Open the `GoogleService-Info.plist` in your favorite text editor and add the following:
+
+```xml
+<key>WEB_CLIENT_ID</key>
+<string>your-web-client-id.apps.googleusercontent.com</string>
+
+```
+
+2. pass `"autoDetect"` as the `webClientId` parameter.
+
+tip
+
+As explained above, `iosClientId` can also be detected automatically - simply do not pass any `iosClientId` value. The reason `webClientId` is a required parameter is API uniformity across all platforms.
+
+***
+
+## Advanced methods[​](#advanced-methods "Direct link to Advanced methods")
+
 ### `signIn`[​](#signin "Direct link to signin")
 
 signature: (`params`?: [`OneTapSignInParams`](/docs/api.md#onetapsigninparams)) => `Promise`<[`OneTapResponse`](/docs/api.md#onetapresponse)>
@@ -96,6 +201,8 @@ signature: (`params`?: [`OneTapSignInParams`](/docs/api.md#onetapsigninparams)) 
 | Web      | Attempts to sign in user automatically, without interaction. [Docs](https://developers.google.com/identity/gsi/web/reference/js-reference#auto_select). If none is found, presents a sign-in UI. [Read below](#web-support) for web support.                                     |
 
 If there is no user that was previously signed in, the returned promise resolves with [`NoSavedCredentialFound`](/docs/api.md#nosavedcredentialfound) object. In that case, you can call [`createAccount`](/docs/one-tap.md#createaccount) to start a flow to create a new account. You don't need to call `signIn` as a response to a user action - you can call it when your app starts or when suitable.
+
+Most apps should use [`authenticate`](#authenticate). Use `signIn` directly only if you need to control this first step yourself.
 
 <!-- -->
 
@@ -153,23 +260,6 @@ const signIn = async () => {
 
 ```
 
-***
-
-<!-- -->
-
-### Utility Functions[​](#utility-functions "Direct link to Utility Functions")
-
-tip
-
-There are 4 helper functions available:
-
-* [`isErrorWithCode`](/docs/errors.md#iserrorwithcodevalue) for processing errors
-* [`isSuccessResponse`](/docs/api.md#issuccessresponse) for checking if a response represents a successful operation. Same as checking `response.type === 'success'`.
-* [`isNoSavedCredentialFoundResponse`](/docs/api.md#isnosavedcredentialfoundresponse) for checking if a response represents no saved credentials case. Same as checking `response.type === 'noSavedCredentialFound'`.
-* [`isCancelledResponse`](/docs/api.md#iscancelledresponse) for checking if a response represents user cancellation case. Same as checking `response.type === 'cancelled'`.
-
-***
-
 ### `createAccount`[​](#createaccount "Direct link to createaccount")
 
 signature: (`params`?: [`OneTapCreateAccountParams`](/docs/api.md#onetapcreateaccountparams)) => `Promise`<[`OneTapResponse`](/docs/api.md#onetapresponse)>
@@ -183,6 +273,8 @@ signature: (`params`?: [`OneTapCreateAccountParams`](/docs/api.md#onetapcreateac
 You don't need to call `createAccount` as a response to a user action - you can call it some time after your app starts (Though keep in mind the way the dialog is presented on iOS might be inconvenient to users if they didn't ask for it) or when suitable.
 
 Use `createAccount` if `signIn` resolved with [`NoSavedCredentialFound` result](/docs/api.md#nosavedcredentialfound), as indicated in the code snippet above.
+
+Most apps should use [`authenticate`](#authenticate). Use `createAccount` directly only if you need to control this step yourself.
 
 <!-- -->
 
@@ -210,6 +302,8 @@ signature: (`params`?: [`OneTapExplicitSignInParams`](/docs/api.md#onetapexplici
 | Web      | Presents a one-tap prompt. Same as `createAccount`.                                                                                                                                                                                                                                                                    |
 
 Preferably, call this method only as a reaction to when user taps a [sign in button](/docs/buttons/google-logo-button.md).
+
+Most apps should use [`authenticate`](#authenticate). Use `presentExplicitSignIn` directly only if you need to control the explicit sign-in step yourself.
 
 <!-- -->
 
@@ -256,21 +350,6 @@ await GoogleOneTapSignIn.checkPlayServices();
 
 ***
 
-### `signOut`[​](#signout "Direct link to signout")
-
-signature: () => `Promise`<`null`>
-
-Signs out the current user. This disables the automatic sign-in.
-
-Returns a `Promise` that resolves with `null` or rejects in case of error.
-
-```ts
-await GoogleOneTapSignIn.signOut();
-
-```
-
-***
-
 ### `revokeAccess`[​](#revokeaccess "Direct link to revokeaccess")
 
 signature: (`emailOrUniqueId`: `string`) => `Promise`<`null`>
@@ -286,63 +365,28 @@ await GoogleOneTapSignIn.revokeAccess(user.id);
 
 ***
 
-### `requestAuthorization`[​](#requestauthorization "Direct link to requestauthorization")
-
-signature: (`params`: [`RequestAuthorizationParams`](/docs/api.md#requestauthorizationparams)) => `Promise`<[`AuthorizationResponse`](/docs/api.md#authorizationresponse)>
-
-The underlying Android SDK separates authentication and authorization - that means that on Android you can request an access token and call Google APIs on behalf of the user without previously signing the user in.
-
-This method is used to request extra authorization from the user. Use this on Android to obtain server-side access (offline access) to the user's data or for requesting an access token that has access to additional scopes.
-
-| Platform | Behavior                                                                                                                                                                                                                                   |
-| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Android  | Presents a modal that asks user for additional access to their Google account. Uses [AuthorizationRequest.Builder](https://developers.google.com/android/reference/com/google/android/gms/auth/api/identity/AuthorizationRequest.Builder). |
-| Apple    | Calls [`addScopes`](/docs/original.md#addscopes). The resulting `accessToken` has access to the requested scopes. Use this if you want to read more user metadata than just the basic info.                                                |
-| Web      | Not implemented at the moment.                                                                                                                                                                                                             |
-
-<!-- -->
-
-UI screenshots
-
-| Android                                | iOS                                 |
-| -------------------------------------- | ----------------------------------- |
-| ![](/img/onetap/authorize-android.jpg) | ![](/img/onetap/add-scopes-ios.png) |
-
-***
-
 ### `clearCachedAccessToken`[​](#clearcachedaccesstoken "Direct link to clearcachedaccesstoken")
 
 signature: (`accessTokenString`: `string`) => `Promise`<`null`>
 
 This method is only needed on Android. You may run into a `401 Unauthorized` error when an access token is invalid. Call this method to remove the token from local cache and then call `requestAuthorization()` to get a fresh access token. Calling this method on Apple does nothing and always resolves. This is because on Apple, `requestAuthorization()` always returns valid tokens, refreshing them first if they have expired or are about to expire (see [docs](https://developers.google.com/identity/sign-in/ios/reference/Classes/GIDGoogleUser#-refreshtokensifneededwithcompletion:)).
 
-## Automatic `webClientId` & `iosClientId` detection[​](#automatic-config "Direct link to automatic-config")
+***
 
-If you use Expo (with the config plugin and prebuild), or if you're using Firebase, you don't need to provide the `iosClientId` parameter to the `configure` method.
+<!-- -->
 
-Additionally, this module can automatically detect the `webClientId` from Firebase's configuration file (does not work on web where you need to provide it explicitly).
-
-This is useful if you're using Firebase and want to avoid manually setting the `webClientId` in your code, especially if you have multiple environments (e.g. staging, production).
-
-To use this feature:
-
-1. Add `WEB_CLIENT_ID` entry to the `GoogleService-Info.plist` file.
-
-On Android, the `google-services.json` file already contains the web client ID information. Unfortunately, it's not the case on iOS, so we need to add it ourselves.
-
-Open the `GoogleService-Info.plist` in your favorite text editor and add the following:
-
-```xml
-<key>WEB_CLIENT_ID</key>
-<string>your-web-client-id.apps.googleusercontent.com</string>
-
-```
-
-2. pass `"autoDetect"` as the `webClientId` parameter.
+### Utility Functions[​](#utility-functions "Direct link to Utility Functions")
 
 tip
 
-As explained above, `iosClientId` can also be detected automatically - simply do not pass any `iosClientId` value. The reason `webClientId` is a required parameter is API uniformity across all platforms.
+There are 4 helper functions available:
+
+These helpers are useful when you call the advanced methods directly. `authenticate` returns `user`, `error`, or `isCancelled` directly.
+
+* [`isErrorWithCode`](/docs/errors.md#iserrorwithcodevalue) for processing errors
+* [`isSuccessResponse`](/docs/api.md#issuccessresponse) for checking if a response represents a successful operation. Same as checking `response.type === 'success'`.
+* [`isNoSavedCredentialFoundResponse`](/docs/api.md#isnosavedcredentialfoundresponse) for checking if a response represents no saved credentials case. Same as checking `response.type === 'noSavedCredentialFound'`.
+* [`isCancelledResponse`](/docs/api.md#iscancelledresponse) for checking if a response represents user cancellation case. Same as checking `response.type === 'cancelled'`.
 
 ***
 

@@ -18,7 +18,7 @@ The authentication APIs in [Universal Sign-In](/docs/one-tap.md) for Apple, Andr
 Example usage:
 
 ```ts
-const response = await GoogleOneTapSignIn.createAccount({
+const response = await GoogleOneTapSignIn.authenticate({
   nonce: getUrlSafeNonce(),
 });
 

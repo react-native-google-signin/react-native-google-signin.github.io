@@ -116,6 +116,8 @@ tip
 
 There are 4 helper functions available:
 
+These helpers are useful when you call the advanced methods directly. `authenticate` returns `user`, `error`, or `isCancelled` directly.
+
 * [`isErrorWithCode`](/docs/errors.md#iserrorwithcodevalue) for processing errors
 * [`isSuccessResponse`](/docs/api.md#issuccessresponse) for checking if a response represents a successful operation. Same as checking `response.type === 'success'`.
 * [`isNoSavedCredentialFoundResponse`](/docs/api.md#isnosavedcredentialfoundresponse) for checking if a response represents no saved credentials case. Same as checking `response.type === 'noSavedCredentialFound'`.

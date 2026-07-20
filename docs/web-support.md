@@ -10,7 +10,7 @@ The functionality covered in this page is available in the licensed version. [Yo
 
 Providing a unified API across all platforms is a bit more tricky than it may seem. The web experience is different from the mobile one, and so are the underlying Google's APIs.
 
-On the web, the `signIn` and `createAccount` functions are not `Promise`-based but callback-based as seen below. That means they return `void` and you need to provide callbacks for success and error handling. Even so, the argument and result types are the same as for native, allowing to reuse the logic for both success and error handling across all platforms.
+On the web, the authentication functions are callback-based instead of `Promise`-based as seen below. That means they return `void` and you need to provide callbacks for success, cancellation, and error handling. Even so, the response shapes are the same as for native, allowing you to reuse most of your handling logic across all platforms.
 
 info
 
@@ -24,9 +24,9 @@ See [here](/docs/setting-up/web.md).
 
 To implement web support, follow these two steps:
 
-1. Call `GoogleOneTapSignIn.signIn` upon page load. This attempts to present the One-tap UI. It also sets up a listener for authentication events and calls the `onSuccess` callback when the user signs in (either with the One-tap flow or the Sign-In button).
+1. Call `GoogleOneTapSignIn.authenticate` upon page load. This attempts to present the One-tap UI. It also sets up a listener for authentication events and calls the `onResponse` callback when the user signs in, cancels the flow, or an error occurs.
 
-If you do not want to present the one-tap UI, pass `skipPrompt: true` in the [`OneTapSignInParams`](/docs/api.md#onetapsigninparams) object. This only sets up the listener for authentication events, and then relies on the user signing in via the `WebGoogleSigninButton`.
+If you do not want to present the one-tap UI, pass `skipPrompt: true` in the [`OneTapAuthenticateParams`](/docs/api.md#onetapauthenticateparams) object. This only sets up the listener for authentication events, and then relies on the user signing in via the `WebGoogleSigninButton`.
 
 warning
 
@@ -39,18 +39,19 @@ useEffect(() => {
     iosClientId: config.iosClientId,
   });
   if (Platform.OS === 'web') {
-    GoogleOneTapSignIn.signIn(
+    GoogleOneTapSignIn.authenticate(
       {
         ux_mode: 'popup',
       },
       {
         onResponse: (response) => {
-          if (response.type === 'success') {
-            console.log(response.data);
+          if (response.user) {
+            console.log(response.user);
+          } else if (response.isCancelled) {
+            // the user cancelled the flow
+          } else if (response.error) {
+            // handle response.error.code
           }
-        },
-        onError: (error) => {
-          // handle error
         },
         momentListener: (moment) => {
           console.log('moment', moment);
@@ -66,10 +67,10 @@ Optionally, you can provide a `momentListener` callback function. The callback i
 
 2. Render the [`WebGoogleSigninButton`](/docs/buttons/web.md) component
 
-One-tap UI may not always be available: This happens if you disable it ([`skipPrompt`](/docs/api.md#onetapsigninparams)), when user has [opted out](https://developers.google.com/identity/gsi/web/guides/features#globally_opt_out) or when they cancel the prompt several times in a row, entering the [cooldown period](https://developers.google.com/identity/gsi/web/guides/features#exponential_cooldown).
+One-tap UI may not always be available: This happens if you disable it ([`skipPrompt`](/docs/api.md#onetapauthenticateparams)), when user has [opted out](https://developers.google.com/identity/gsi/web/guides/features#globally_opt_out) or when they cancel the prompt several times in a row, entering the [cooldown period](https://developers.google.com/identity/gsi/web/guides/features#exponential_cooldown).
 
 `WebGoogleSigninButton` serves as a fallback. Tapping it opens the regular Google Sign-In dialog (or redirect, based on `ux_mode` param). When user signs in, the `onResponse` callback is called.
 
 ## Methods[​](#methods "Direct link to Methods")
 
-The methods on the web are the same as on native — see [here](/docs/one-tap.md#methods) for their docs.
+The methods on the web are the same as on native, but authentication methods use callbacks on web. See [here](/docs/one-tap.md#main-methods) for their docs.

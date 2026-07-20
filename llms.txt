@@ -28,7 +28,7 @@ There are two modules:
 
 ## Usage
 
-- [API reference](/docs/api.md): API reference for `GoogleOneTapSignIn` (Universal) and `GoogleSignin` (Original) modules. Covers `configure()`, `signIn()`, `createAccount()`, `requestAuthorization()`, and all types.
+- [API reference](/docs/api.md): API reference for `GoogleOneTapSignIn` (Universal) and `GoogleSignin` (Original) modules. Covers all methods and types.
 - [GoogleLogoButton](/docs/buttons/google-logo-button.md): `GoogleLogoButton` component following Google's official branding guidelines. For native apps only (renders null on web). Customizable size, style, and loading state.
 - [WebGoogleSigninButton](/docs/buttons/web.md): `WebGoogleSigninButton` component for web apps. Renders null in native apps. Supports size, shape, theme, and locale customization.
 - [Universal sign in](/docs/one-tap.md): Google's recommended Sign-In API for Android (Credential Manager), iOS/macOS (Google Sign-In SDK), and web. Covers `configure()`, sign-in flows, user data access, and token handling.

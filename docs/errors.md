@@ -2,6 +2,8 @@
 
 When catching and handling errors thrown by the library, it's strongly recommended not to immediately present them using the [`Alert` module](https://reactnative.dev/docs/alert). This is because on Android, when transitioning from the Google Sign-In flow to your app, the current [Activity](https://developer.android.com/reference/android/app/Activity) may be `null` which would cause the alert call to be a noop. You can work around this by presenting the alert after a delay, or handling the error differently.
 
+For authentication, the recommended [`authenticate`](/docs/one-tap.md#authenticate) API returns typed errors as `response.error`, so you can read `response.error.code` without narrowing a caught value. The helpers below are still useful for advanced methods and for the Original Google Sign In module.
+
 ### `isErrorWithCode(value)`[​](#iserrorwithcodevalue "Direct link to iserrorwithcodevalue")
 
 TypeScript helper to check if the passed parameter is an instance of `Error` which has the `code` property. All errors thrown by this library have the `code` property, which contains a value from [`statusCodes`](#status-codes) or some other string for the less-usual errors.
@@ -34,9 +36,9 @@ import { statusCodes } from '@react-native-google-signin/google-signin';
 
 ```
 
-Status codes are useful when determining which kind of error has occurred during the sign-in process. These constants are stable canonical values exported by the library, so you can compare `error.code` to `statusCodes.*` with good TypeScript support. Less common native failures may still surface other string values.
+Status codes are useful when determining which kind of error has occurred during the sign-in process. These constants are stable values exported by the library, so you can compare `error.code` to `statusCodes.*` with good TypeScript support. Less common native failures may still surface other string values.
 
-See [example usage](/docs/one-tap.md#signin).
+See [example usage](/docs/one-tap.md#authenticate).
 
 | Name                          | Description                                                                                                                                                                                                                                                                                                                                                             |
 | ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -44,4 +46,4 @@ See [example usage](/docs/one-tap.md#signin).
 | `PLAY_SERVICES_NOT_AVAILABLE` | Play services are not available or outdated. This happens on Android, or on the web when you're calling the exposed APIs [before the Client library is loaded](/docs/setting-up/web.md).                                                                                                                                                                                |
 | `NULL_PRESENTER`              | Happens in the unlikely situation when the `Activity` (on Android) or `UIViewController` (on iOS) for presenting the sign in UI isn't available.                                                                                                                                                                                                                        |
 
-See [example usage](/docs/one-tap.md#signin).
+See [example usage](/docs/one-tap.md#authenticate).

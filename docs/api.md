@@ -44,13 +44,37 @@ Parameters for enabling [App Check](/docs/security.md#appcheck). Provide `debugP
 
 ***
 
+### OneTapAuthenticateParams[​](#onetapauthenticateparams "Direct link to OneTapAuthenticateParams")
+
+> **OneTapAuthenticateParams** = [`OneTapCreateAccountParams`](#onetapcreateaccountparams) & { `showErrorResolutionDialog?`: `boolean`; }
+
+Parameters for `authenticate`. On native platforms, the method runs the complete authentication sequence: it checks Play Services on Android, tries `signIn` to restore a saved credential without user interaction, calls `createAccount` if no saved credential is found, and finally calls `presentExplicitSignIn` if the user still needs to pick or add an account. On web, the parameters are passed to the web `signIn` call that initializes the Google Identity Services One Tap listener. Unsupported platform-specific parameters are ignored.
+
+`requestVerifiedPhoneNumber` is passed only to `createAccount`.
+
+#### Type Declaration[​](#type-declaration "Direct link to Type Declaration")
+
+| Name                         | Type      | Description                                                                                                                          |
+| ---------------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `showErrorResolutionDialog?` | `boolean` | Android only. Whether to show a dialog that helps the user resolve Google Play Services issues before signing in. **Default** `true` |
+
+***
+
+### OneTapAuthenticateResponse[​](#onetapauthenticateresponse "Direct link to OneTapAuthenticateResponse")
+
+> **OneTapAuthenticateResponse** = { `error`: `null`; `isCancelled`: `false`; `user`: [`OneTapUser`](#onetapuser); } | { `error`: `null`; `isCancelled`: `true`; `user`: `null`; } | { `error`: `NativeModuleError`; `isCancelled`: `false`; `user`: `null`; }
+
+The response object for `authenticate`. When `error` is not null, it is a `NativeModuleError`. The `code` field is always available, so you can switch on it without narrowing an unknown caught value.
+
+***
+
 ### OneTapConfigureParams[​](#onetapconfigureparams "Direct link to OneTapConfigureParams")
 
 > **OneTapConfigureParams** = [`ClientIdOrPlistPath`](#clientidorplistpath) & { `hostedDomain?`: `string`; `logLevel?`: `"debug"` | `"info"` | `"warn"`; `openIdRealm?`: `string`; `profileImageSize?`: `number`; `scopes?`: `string`\[]; `webClientId`: `WebClientId`; }
 
 `webClientId` is the most important parameter in the configuration. It is required.
 
-#### Type Declaration[​](#type-declaration "Direct link to Type Declaration")
+#### Type Declaration[​](#type-declaration-1 "Direct link to Type Declaration")
 
 | Name                | Type                              | Description                                                                                                                                                                  |
 | ------------------- | --------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -67,7 +91,7 @@ Parameters for enabling [App Check](/docs/security.md#appcheck). Provide `debugP
 
 > **OneTapCreateAccountParams** = [`OneTapSignInParams`](#onetapsigninparams) & { `accountName?`: `string`; `requestVerifiedPhoneNumber?`: `boolean`; }
 
-#### Type Declaration[​](#type-declaration-1 "Direct link to Type Declaration")
+#### Type Declaration[​](#type-declaration-2 "Direct link to Type Declaration")
 
 | Name                          | Type      | Description                                                                                                                                                                 |
 | ----------------------------- | --------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -80,7 +104,7 @@ Parameters for enabling [App Check](/docs/security.md#appcheck). Provide `debugP
 
 > **OneTapExplicitSignInParams** = [`OneTapSignInParams`](#onetapsigninparams) & { `accountName?`: `string`; }
 
-#### Type Declaration[​](#type-declaration-2 "Direct link to Type Declaration")
+#### Type Declaration[​](#type-declaration-3 "Direct link to Type Declaration")
 
 | Name           | Type     | Description                                                                                             |
 | -------------- | -------- | ------------------------------------------------------------------------------------------------------- |
@@ -108,7 +132,7 @@ The response object for OneTap's `signIn` and `createAccount`.
 
 Learn more about additional web-only parameters at [Google's reference documentation](https://developers.google.com/identity/gsi/web/reference/js-reference#IdConfiguration).
 
-#### Type Declaration[​](#type-declaration-3 "Direct link to Type Declaration")
+#### Type Declaration[​](#type-declaration-4 "Direct link to Type Declaration")
 
 | Name          | Type      | Description                                                                                                                                                                                                          |
 | ------------- | --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -191,16 +215,17 @@ Learn more in the [guide](/docs/one-tap.md#requestauthorization).
 
 ### GoogleOneTapSignIn[​](#googleonetapsignin "Direct link to GoogleOneTapSignIn")
 
-> `const` **GoogleOneTapSignIn**: { `checkPlayServices`: (`showErrorResolutionDialog?`: `boolean`) => `Promise`<[`PlayServicesInfo`](#playservicesinfo)>; `clearCachedAccessToken`: (`tokenString`: `string`) => `Promise`<`null`>; `configure`: (`options`: [`OneTapConfigureParams`](#onetapconfigureparams)) => `void`; `createAccount`: `CreateAccountInterface`; `enableAppCheck`: (`params?`: [`EnableAppCheckParams`](#enableappcheckparams)) => `Promise`<`null`>; `presentExplicitSignIn`: `ExplicitSignInInterface`; `requestAuthorization`: (`options`: [`RequestAuthorizationParams`](#requestauthorizationparams)) => `Promise`<[`AuthorizationResponse`](#authorizationresponse)>; `revokeAccess`: (`emailOrUniqueId`: `string`) => `Promise`<`null`>; `signIn`: `SignInInterface`; `signOut`: () => `Promise`<`null`>; }
+> complex type; see below
 
 The entry point of the Universal Sign In API, exposed as `GoogleOneTapSignIn`.
 
-On the web, the signatures of `signIn`, `presentExplicitSignIn`, and `createAccount` are callback-based and on native they are Promise-based. Read more in the [guide](/docs/one-tap.md#web-support).
+On the web, the signatures of `authenticate`, `signIn`, `presentExplicitSignIn`, and `createAccount` are callback-based and on native they are Promise-based. Read more in the [guide](/docs/one-tap.md#web-support).
 
-#### Type Declaration[​](#type-declaration-4 "Direct link to Type Declaration")
+#### Type Declaration[​](#type-declaration-5 "Direct link to Type Declaration")
 
 | Name                           | Type                                                                                                                                                                           |
 | ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| []()`authenticate`             | (`params?`: [`OneTapAuthenticateParams`](#onetapauthenticateparams)) => `Promise`<[`OneTapAuthenticateResponse`](#onetapauthenticateresponse)>                                 |
 | []()`checkPlayServices()`      | (`showErrorResolutionDialog?`: `boolean`) => `Promise`<[`PlayServicesInfo`](#playservicesinfo)>                                                                                |
 | []()`clearCachedAccessToken()` | (`tokenString`: `string`) => `Promise`<`null`>                                                                                                                                 |
 | []()`configure()`              | (`options`: [`OneTapConfigureParams`](#onetapconfigureparams)) => `void`                                                                                                       |
@@ -230,7 +255,7 @@ On the web, the signatures of `signIn`, `presentExplicitSignIn`, and `createAcco
 
 > **ConfigureParams** = [`ClientIdOrPlistPath`](#clientidorplistpath) & { `accountName?`: `string`; `forceCodeForRefreshToken?`: `boolean`; `hostedDomain?`: `string`; `offlineAccess?`: `boolean`; `openIdRealm?`: `string`; `profileImageSize?`: `number`; `scopes?`: `string`\[]; `webClientId?`: `WebClientId`; }
 
-#### Type Declaration[​](#type-declaration-5 "Direct link to Type Declaration")
+#### Type Declaration[​](#type-declaration-6 "Direct link to Type Declaration")
 
 | Name                        | Type          | Description                                                                                                                                                                                                                                                                                                                                 |
 | --------------------------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -335,11 +360,11 @@ The response object when the user signs in successfully.
 
 ### GoogleSignin[​](#googlesignin "Direct link to GoogleSignin")
 
-> `const` **GoogleSignin**: { `addScopes`: (`options`: [`AddScopesParams`](#addscopesparams)) => `Promise`<[`SignInResponse`](#signinresponse) | `null`>; `clearCachedAccessToken`: (`tokenString`: `string`) => `Promise`<`null`>; `configure`: (`options?`: [`ConfigureParams`](#configureparams)) => `void`; `enableAppCheck`: (`params?`: [`EnableAppCheckParams`](#enableappcheckparams)) => `Promise`<`null`>; `getCurrentUser`: () => [`User`](#user) | `null`; `getTokens`: () => `Promise`<[`GetTokensResponse`](#gettokensresponse)>; `hasPlayServices`: (`options?`: [`HasPlayServicesParams`](#hasplayservicesparams)) => `Promise`<`boolean`>; `hasPreviousSignIn`: () => `boolean`; `revokeAccess`: () => `Promise`<`null`>; `signIn`: (`options`: [`SignInParams`](#signinparams)) => `Promise`<[`SignInResponse`](#signinresponse)>; `signInSilently`: () => `Promise`<[`SignInSilentlyResponse`](#signinsilentlyresponse)>; `signOut`: () => `Promise`<`null`>; }
+> complex type; see below
 
 The entry point of the Google Sign In API, exposed as `GoogleSignin`.
 
-#### Type Declaration[​](#type-declaration-6 "Direct link to Type Declaration")
+#### Type Declaration[​](#type-declaration-7 "Direct link to Type Declaration")
 
 | Name                           | Type                                                                                                           |
 | ------------------------------ | -------------------------------------------------------------------------------------------------------------- |
@@ -365,6 +390,8 @@ The entry point of the Google Sign In API, exposed as `GoogleSignin`.
 Read more about the meaning of the error codes in the [guide](/docs/errors.md).
 
 ## Functions[​](#functions "Direct link to Functions")
+
+Prefer using `authenticate`, which returns `user`, `error`, or `isCancelled` directly. The response helpers in this section are mainly for response unions returned by advanced methods, such as [OneTapResponse](#onetapresponse).
 
 ### isCancelledResponse()[​](#iscancelledresponse "Direct link to isCancelledResponse()")
 
@@ -454,7 +481,7 @@ if (isNoSavedCredentialFoundResponse(response)) {
 
 > **isSuccessResponse**(`response`: [`OneTapResponse`](#onetapresponse)): `response is OneTapSuccessResponse`
 
-TypeScript helper to check if a response is a `cancelled` response. This is the same as checking if the `response.type === "cancelled"`.
+TypeScript helper to check if a response is a `success` response. This is the same as checking if the `response.type === "success"`.
 
 Use this if you prefer to use a function instead of comparing with a raw string.
 
@@ -503,7 +530,7 @@ if (isSuccessResponse(response)) {
 
 > **GoogleSigninButtonProps** = `ViewProps` & { `color?`: `"dark"` | `"light"`; `disabled?`: `boolean`; `onPress?`: () => `void`; `size?`: `number`; }
 
-#### Type Declaration[​](#type-declaration-7 "Direct link to Type Declaration")
+#### Type Declaration[​](#type-declaration-8 "Direct link to Type Declaration")
 
 | Name         | Type                  |
 | ------------ | --------------------- |
@@ -518,7 +545,7 @@ if (isSuccessResponse(response)) {
 
 > **WebGoogleSignInButtonProps** = `Omit`<`GsiButtonConfiguration`, `"logo_alignment"`> & { `logoAlignment?`: `GsiButtonConfiguration`\[`"logo_alignment"`]; `onError?`: (`error`: `Error`) => `void`; }
 
-#### Type Declaration[​](#type-declaration-8 "Direct link to Type Declaration")
+#### Type Declaration[​](#type-declaration-9 "Direct link to Type Declaration")
 
 | Name             | Type                                          |
 | ---------------- | --------------------------------------------- |
@@ -629,13 +656,28 @@ The response to calling One Tap's `signIn` and Original Google Sign In's `signIn
 
 ## Web Universal sign in module[​](#web-universal-sign-in-module "Direct link to Web Universal sign in module")
 
+### WebOneTapAuthenticateCallbacks[​](#webonetapauthenticatecallbacks "Direct link to WebOneTapAuthenticateCallbacks")
+
+> **WebOneTapAuthenticateCallbacks** = { `momentListener?`: `MomentListener`; `onResponse`: (`response`: [`OneTapAuthenticateResponse`](#onetapauthenticateresponse)) => `void` | `Promise`<`void`>; }
+
+When using `authenticate` on the web, the result is delivered via callbacks because the Google Identity Services SDK can emit a non-success response and still later emit a successful sign-in from the button flow.
+
+#### Properties[​](#properties-15 "Direct link to Properties")
+
+| Property              | Type                                                                                                     | Description                                                                                                                                                                           |
+| --------------------- | -------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| []()`momentListener?` | `MomentListener`                                                                                         | A callback function that is called when important events take place. See [reference](https://developers.google.com/identity/gsi/web/reference/js-reference#PromptMomentNotification). |
+| []()`onResponse`      | (`response`: [`OneTapAuthenticateResponse`](#onetapauthenticateresponse)) => `void` \| `Promise`<`void`> | Called when the sign-in flow emits a success, cancellation, or typed error. This callback may be called more than once on web.                                                        |
+
+***
+
 ### WebOneTapSignInCallbacks[​](#webonetapsignincallbacks "Direct link to WebOneTapSignInCallbacks")
 
 > **WebOneTapSignInCallbacks** = { `momentListener?`: `MomentListener`; `onError`: (`error`: `NativeModuleError`) => `void` | `Promise`<`void`>; `onResponse`: (`userInfo`: [`OneTapExplicitSignInResponse`](#onetapexplicitsigninresponse)) => `void` | `Promise`<`void`>; }
 
 When using Universal sign in on the web, the sign in result is delivered via a callback, not via a promise. The shape of data delivered to the callback is the same as the shape of the data in the promise, enabling code reuse. Read more in the [guide](/docs/one-tap.md#web-support).
 
-#### Properties[​](#properties-15 "Direct link to Properties")
+#### Properties[​](#properties-16 "Direct link to Properties")
 
 | Property              | Type                                                                                                         | Description                                                                                                                                                                                                                                                       |
 | --------------------- | ------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
