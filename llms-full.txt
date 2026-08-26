@@ -45,7 +45,7 @@ Buy a license, then follow the private npm registry setup below to add the packa
 
 * **Licensed:** see [pricing](https://universal-sign-in.com/#pricing) and [license](https://universal-sign-in.com/license).
 
-* **Trusted**: 1 mil+ npm downloads.
+* **Trusted**: 1.5 mil+ npm downloads.
 
 * **Faster**: Reduce sign-up and sign-in times on Android, according to [Google](https://developer.android.com/identity/sign-in/legacy-gsi-migration#authentication).
 
@@ -180,7 +180,7 @@ The latest version of the Universal Sign In package supports (use older versions
 |              | supported range |
 | ------------ | --------------- |
 | expo         | 52.0.40 - 57    |
-| react-native | 0.76.0 - 0.86   |
+| react-native | 0.76.0 - 0.87   |
 
 > We recommend [Expo](https://expo.dev) and [EAS](https://expo.dev/eas) for building and deploying your React Native app. Expo offers the best developer experience and is well-supported by this library.
 
@@ -455,6 +455,24 @@ If you use Expo, follow [this guide](/docs/setting-up/expo.md) instead. This gui
 ##### Link the native module[​](#link-the-native-module "Direct link to Link the native module")
 
 * run `pod install` in the `ios/` directory to install the module
+
+###### CocoaPods modular headers[​](#cocoapods-modular-headers "Direct link to CocoaPods modular headers")
+
+Some dependency combinations may require modular headers. If `pod install` reports that the Swift pod `AppCheckCore` depends on `GoogleUtilities` or `RecaptchaInterop`, which do not define modules, add both pods to your existing application target in the `Podfile`:
+
+ios/Podfile
+
+```ruby
+target 'YourApp' do
+  pod 'GoogleUtilities', :modular_headers => true
+  pod 'RecaptchaInterop', :modular_headers => true
+
+  # The rest of your existing target configuration
+end
+
+```
+
+Do not add version constraints to these declarations. CocoaPods will select versions compatible with Google Sign-In, and your other dependencies. Projects that already use `use_modular_headers!` or `use_frameworks!` do not need these additional declarations.
 
 ##### Google project configuration[​](#google-project-configuration "Direct link to Google project configuration")
 

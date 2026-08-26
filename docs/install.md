@@ -24,7 +24,7 @@ Buy a license, then follow the private npm registry setup below to add the packa
 
 * **Licensed:** see [pricing](https://universal-sign-in.com/#pricing) and [license](https://universal-sign-in.com/license).
 
-* **Trusted**: 1 mil+ npm downloads.
+* **Trusted**: 1.5 mil+ npm downloads.
 
 * **Faster**: Reduce sign-up and sign-in times on Android, according to [Google](https://developer.android.com/identity/sign-in/legacy-gsi-migration#authentication).
 
@@ -161,6 +161,6 @@ The latest version of the Universal Sign In package supports (use older versions
 |              | supported range |
 | ------------ | --------------- |
 | expo         | 52.0.40 - 57    |
-| react-native | 0.76.0 - 0.86   |
+| react-native | 0.76.0 - 0.87   |
 
 > We recommend [Expo](https://expo.dev) and [EAS](https://expo.dev/eas) for building and deploying your React Native app. Expo offers the best developer experience and is well-supported by this library.
