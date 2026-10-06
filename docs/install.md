@@ -34,6 +34,7 @@ Buy a license, then follow the private npm registry setup below to add the packa
 
 🔧 **Easier setup**:
 
+* **Swift Package Manager (beta)** support for iOS native dependencies. See the [iOS setup guide](/docs/setting-up/ios.md#swift-package-manager-beta) or [Expo setup guide](/docs/setting-up/expo.md#swift-package-manager-beta).
 * Android [Config Doctor](/docs/config-doctor.md) to diagnose configuration errors before they cost you hours.
 * Automatic detection of [configuration parameters](/docs/one-tap.md#automatic-config) for faster integration.
 
